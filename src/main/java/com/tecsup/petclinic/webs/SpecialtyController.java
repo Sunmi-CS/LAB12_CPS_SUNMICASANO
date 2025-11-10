@@ -1,13 +1,13 @@
-package com.tecsup.petclinic.controllers;
+package com.tecsup.petclinic.webs;
 
 import com.tecsup.petclinic.dtos.SpecialtyDTO;
-import com.tecsup.petclinic.entities.Specialty;
 import com.tecsup.petclinic.services.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/specialties")
@@ -17,39 +17,31 @@ public class SpecialtyController {
     private SpecialtyService specialtyService;
 
     @PostMapping
-    public SpecialtyDTO createSpecialty(@RequestBody SpecialtyDTO dto) {
-        Specialty specialty = new Specialty();
-        specialty.setName(dto.getName());
-
-        Specialty saved = specialtyService.createSpecialty(specialty);
-
-        dto.setId(saved.getId());
-        return dto;
-    }
-
-    @GetMapping("/{id}")
-    public SpecialtyDTO getSpecialty(@PathVariable Integer id) {
-        Specialty specialty = specialtyService.getSpecialtyById(id);
-        if (specialty == null) return null;
-
-        SpecialtyDTO dto = new SpecialtyDTO();
-        dto.setId(specialty.getId());
-        dto.setName(specialty.getName());
-        return dto;
+    public ResponseEntity<SpecialtyDTO> createSpecialty(@RequestBody SpecialtyDTO specialtyDTO) {
+        SpecialtyDTO newSpecialty = specialtyService.create(specialtyDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newSpecialty);
     }
 
     @GetMapping
-    public List<SpecialtyDTO> getAllSpecialties() {
-        return specialtyService.getAllSpecialties().stream().map(s -> {
-            SpecialtyDTO dto = new SpecialtyDTO();
-            dto.setId(s.getId());
-            dto.setName(s.getName());
-            return dto;
-        }).collect(Collectors.toList());
+    public ResponseEntity<List<SpecialtyDTO>> listSpecialties() {
+        return ResponseEntity.ok(specialtyService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SpecialtyDTO> getSpecialty(@PathVariable Integer id) {
+        SpecialtyDTO specialty = specialtyService.findById(id);
+        return ResponseEntity.ok(specialty);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SpecialtyDTO> updateSpecialty(@PathVariable Integer id, @RequestBody SpecialtyDTO specialtyDTO) {
+        SpecialtyDTO updated = specialtyService.update(id, specialtyDTO);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSpecialty(@PathVariable Integer id) {
-        specialtyService.deleteSpecialty(id);
+    public ResponseEntity<Void> deleteSpecialty(@PathVariable Integer id) {
+        specialtyService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,26 +1,18 @@
 package com.tecsup.petclinic.services;
 
-import java.util.List;
 import com.tecsup.petclinic.dtos.PetTypeDTO;
-import com.tecsup.petclinic.entities.PetType;
+
+import java.util.List;
 
 public interface PetTypeService {
 
-    List<PetType> findAllPetTypes();
+    PetTypeDTO create(PetTypeDTO petTypeDTO);
 
-    PetType findPetTypeById(Long id);
+    PetTypeDTO update(Integer id, PetTypeDTO petTypeDTO);
 
-    PetType createPetType(PetType petType);
+    void delete(Integer id);
 
-    PetType updatePetType(Long id, PetType petTypeDetails);
+    PetTypeDTO findById(Integer id);
 
-    void deletePetType(Long id);
-
-    List<PetTypeDTO> listPetTypes();
-
-    PetTypeDTO findPetTypeById(Integer id);
-
-    PetTypeDTO savePetType(PetTypeDTO petTypeDTO);
-
-    void deletePetType(Integer id);
+    List<PetTypeDTO> findAll();
 }

@@ -1,23 +1,35 @@
 package com.tecsup.petclinic.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
-@Entity
+import java.util.Date;
+import java.util.Set;
+
+/**
+ *
+ * @author jgomezm
+ *
+ */
+@NoArgsConstructor
+@Entity(name = "types")
+@Data
 public class PetType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    private String name;
+	@Column(name = "name")
+	private String name;
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+//	@OneToMany(mappedBy = "type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	@ToString.Exclude
+//	@EqualsAndHashCode.Exclude
+//	private Set<Pet> pets;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 }

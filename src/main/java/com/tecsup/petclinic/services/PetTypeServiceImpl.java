@@ -2,13 +2,14 @@ package com.tecsup.petclinic.services;
 
 import com.tecsup.petclinic.dtos.PetTypeDTO;
 import com.tecsup.petclinic.entities.PetType;
+import com.tecsup.petclinic.exceptions.ResourceNotFoundException;
+import com.tecsup.petclinic.mapper.PetTypeMapper;
 import com.tecsup.petclinic.repositories.PetTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PetTypeServiceImpl implements PetTypeService {
@@ -16,52 +17,45 @@ public class PetTypeServiceImpl implements PetTypeService {
     @Autowired
     private PetTypeRepository petTypeRepository;
 
+    @Autowired
+    private PetTypeMapper petTypeMapper;
+
     @Override
-    public List<PetType> findAllPetTypes() {
-        return petTypeRepository.findAll();
+    public PetTypeDTO create(PetTypeDTO petTypeDTO) {
+        PetType type = petTypeMapper.toEntity(petTypeDTO);
+        PetType saved = petTypeRepository.save(type);
+        return petTypeMapper.toDTO(saved);
     }
 
     @Override
-    public PetType findPetTypeById(Long id) {
-        return petTypeRepository.findById(Math.toIntExact(id))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "PetType not found"));
+    public PetTypeDTO update(Integer id, PetTypeDTO petTypeDTO) {
+        PetType existing = petTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PetType not found with id: " + id));
+
+        existing.setName(petTypeDTO.getName());
+        PetType updated = petTypeRepository.save(existing);
+        return petTypeMapper.toDTO(updated);
     }
 
     @Override
-    public PetType createPetType(PetType petType) {
-        return petTypeRepository.save(petType);
-    }
-
-    @Override
-    public PetType updatePetType(Long id, PetType petTypeDetails) {
-        PetType existing = findPetTypeById(id);
-        existing.setName(petTypeDetails.getName());
-        return petTypeRepository.save(existing);
-    }
-
-    @Override
-    public void deletePetType(Long id) {
-        PetType existing = findPetTypeById(id);
+    public void delete(Integer id) {
+        PetType existing = petTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PetType not found with id: " + id));
         petTypeRepository.delete(existing);
     }
 
     @Override
-    public List<PetTypeDTO> listPetTypes() {
-        return List.of();
+    public PetTypeDTO findById(Integer id) {
+        PetType type = petTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PetType not found with id: " + id));
+        return petTypeMapper.toDTO(type);
     }
 
     @Override
-    public PetTypeDTO findPetTypeById(Integer id) {
-        return null;
-    }
-
-    @Override
-    public PetTypeDTO savePetType(PetTypeDTO petTypeDTO) {
-        return null;
-    }
-
-    @Override
-    public void deletePetType(Integer id) {
-
+    public List<PetTypeDTO> findAll() {
+        return petTypeRepository.findAll()
+                .stream()
+                .map(petTypeMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

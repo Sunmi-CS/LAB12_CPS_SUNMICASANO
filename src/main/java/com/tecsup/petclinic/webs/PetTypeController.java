@@ -1,9 +1,10 @@
 package com.tecsup.petclinic.webs;
 
-import com.tecsup.petclinic.entities.PetType;
+import com.tecsup.petclinic.dtos.PetTypeDTO;
 import com.tecsup.petclinic.services.PetTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,30 +16,31 @@ public class PetTypeController {
     @Autowired
     private PetTypeService petTypeService;
 
+    @PostMapping
+    public ResponseEntity<PetTypeDTO> createType(@RequestBody PetTypeDTO petTypeDTO) {
+        PetTypeDTO created = petTypeService.create(petTypeDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
     @GetMapping
-    public List<PetType> listAll() {
-        return petTypeService.findAllPetTypes();
+    public ResponseEntity<List<PetTypeDTO>> listTypes() {
+        return ResponseEntity.ok(petTypeService.findAll());
     }
 
     @GetMapping("/{id}")
-    public PetType getById(@PathVariable Long id) {
-        return petTypeService.findPetTypeById(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PetType create(@RequestBody PetType petType) {
-        return petTypeService.createPetType(petType);
+    public ResponseEntity<PetTypeDTO> getTypeById(@PathVariable Integer id) {
+        return ResponseEntity.ok(petTypeService.findById(id));
     }
 
     @PutMapping("/{id}")
-    public PetType update(@PathVariable Long id, @RequestBody PetType petType) {
-        return petTypeService.updatePetType(id, petType);
+    public ResponseEntity<PetTypeDTO> updateType(@PathVariable Integer id, @RequestBody PetTypeDTO petTypeDTO) {
+        PetTypeDTO updated = petTypeService.update(id, petTypeDTO);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        petTypeService.deletePetType(id);
+    public ResponseEntity<Void> deleteType(@PathVariable Integer id) {
+        petTypeService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
