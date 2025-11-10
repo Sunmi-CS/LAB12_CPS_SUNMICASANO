@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class SpecialtyDTO {
-    private Integer id; // Igual que la entidad
+    private Integer id;
     private String name;
 }

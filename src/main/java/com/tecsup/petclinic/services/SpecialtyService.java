@@ -1,18 +1,15 @@
 package com.tecsup.petclinic.services;
 
-import com.tecsup.petclinic.dtos.SpecialtyDTO;
-
+import com.tecsup.petclinic.entities.Specialty;
 import java.util.List;
 
 public interface SpecialtyService {
 
-    SpecialtyDTO create(SpecialtyDTO specialtyDTO);
+    Specialty createSpecialty(Specialty specialty);
 
-    List<SpecialtyDTO> findAll();
+    Specialty getSpecialtyById(Integer id);
 
-    SpecialtyDTO findById(Integer id);
+    List<Specialty> getAllSpecialties();
 
-    SpecialtyDTO update(SpecialtyDTO specialtyDTO);
-
-    void delete(Integer id);
+    void deleteSpecialty(Integer id);
 }

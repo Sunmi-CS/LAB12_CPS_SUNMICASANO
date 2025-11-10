@@ -1,45 +1,55 @@
-package com.tecsup.petclinic.webs;
+package com.tecsup.petclinic.controllers;
 
 import com.tecsup.petclinic.dtos.SpecialtyDTO;
+import com.tecsup.petclinic.entities.Specialty;
 import com.tecsup.petclinic.services.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/specialties")
+@RequestMapping("/specialties")
 public class SpecialtyController {
 
     @Autowired
     private SpecialtyService specialtyService;
 
     @PostMapping
-    public ResponseEntity<SpecialtyDTO> create(@RequestBody SpecialtyDTO specialtyDTO) {
-        SpecialtyDTO created = specialtyService.create(specialtyDTO);
-        return ResponseEntity.ok(created);
-    }
+    public SpecialtyDTO createSpecialty(@RequestBody SpecialtyDTO dto) {
+        Specialty specialty = new Specialty();
+        specialty.setName(dto.getName());
 
-    @GetMapping
-    public ResponseEntity<List<SpecialtyDTO>> findAllSpecialties() {
-        return ResponseEntity.ok(specialtyService.findAll());
+        Specialty saved = specialtyService.createSpecialty(specialty);
+
+        dto.setId(saved.getId());
+        return dto;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SpecialtyDTO> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok(specialtyService.findById(id));
+    public SpecialtyDTO getSpecialty(@PathVariable Integer id) {
+        Specialty specialty = specialtyService.getSpecialtyById(id);
+        if (specialty == null) return null;
+
+        SpecialtyDTO dto = new SpecialtyDTO();
+        dto.setId(specialty.getId());
+        dto.setName(specialty.getName());
+        return dto;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<SpecialtyDTO> update(@RequestBody SpecialtyDTO specialtyDTO, @PathVariable Integer id) {
-        specialtyDTO.setId(id);
-        return ResponseEntity.ok(specialtyService.update(specialtyDTO));
+    @GetMapping
+    public List<SpecialtyDTO> getAllSpecialties() {
+        return specialtyService.getAllSpecialties().stream().map(s -> {
+            SpecialtyDTO dto = new SpecialtyDTO();
+            dto.setId(s.getId());
+            dto.setName(s.getName());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Integer id) {
-        specialtyService.delete(id);
-        return ResponseEntity.ok("Specialty eliminado con ID: " + id);
+    public void deleteSpecialty(@PathVariable Integer id) {
+        specialtyService.deleteSpecialty(id);
     }
 }
