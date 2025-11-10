@@ -97,6 +97,7 @@ public class OwnerControllerTest {
                 .andExpect(jsonPath("$.city", is("Cusco")));
     }
 
+
     @Test
     void testDeleteOwner() throws Exception {
         mockMvc.perform(delete("/owners/" + testOwner.getId()))
